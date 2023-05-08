@@ -29,8 +29,7 @@
 }
 
 .card {
-    width: 23%;
-    max-width: 15rem;
+    max-width: 25rem;
 }
 
 .card>img {
@@ -48,17 +47,17 @@ nav {
 
 main {
     min-height: 80vh;
-    background-color: #aaaaaa;
+    background-color: #ee98c3;
 }
 
 footer {
-    height: 10vh;
+    height: 3rem;
     width: 100vw;
-    background-color: #c6c6c6;
+    background-color:#9ac5eb;
 }
 
 footer>img {
-    height: 60%;
+    height: 50%;
 }
 
 fieldset {
@@ -100,7 +99,7 @@ fieldset>label {
 }
 
 thead>tr {
-    background-color: #e2e3e5;
+    background-color: #65b1a2;
 }
 
 tbody>tr {
@@ -129,13 +128,6 @@ tbody>tr {
 
     #detail-image {
         height: unset;
-    }
-
-    .card-container {
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        gap: 1rem;
     }
 
     .card-container>.card {
