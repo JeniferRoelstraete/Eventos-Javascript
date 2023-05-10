@@ -1,5 +1,4 @@
-let contenedorTarjetas = document.getElementById("contenedor-tarjetas-upcoming")
-const fechaActual = data.currentDate
+let contenedorTarjetas = document.getElementById("contenedor-tarjetas");
 let containerCategory = document.getElementById("container-categorias");
 let buscador = document.getElementById("buscador");
 let valorBusqueda = document.getElementById("valor-ingresado");
@@ -16,8 +15,9 @@ function armarTarjeta(evento) {
             <a href="./details.html" class="btn btn-primary">See more</a>
         </div>
     </div>
-</div>`
+</div>`;
 }
+
 
 function armarCheckbox(nombreCategoria, indice) {
     return `<div class="form-check">
@@ -46,18 +46,14 @@ function actualizarListaCategoriasDom(eventos, seccion) {
 function crearListaEventos(eventos) {
     let listaEventos = ''
     for (let evento of eventos) {
-        listaEventos += armarTarjeta(evento)
+        listaEventos += armarTarjeta(evento);
     }
 
-    return listaEventos
-}
-
-function filtrarEventosFuturos(eventos, fecha) {
-    return eventos.filter(evento => evento.date >= fecha)
+    return listaEventos;
 }
 
 function actualizarDom(listaEventosACrear, seccion) {
-    const listaEventos = crearListaEventos(filtrarEventosFuturos(listaEventosACrear, fechaActual))
+    const listaEventos = crearListaEventos(listaEventosACrear)
 
     seccion.innerHTML = listaEventos
 }
@@ -71,7 +67,6 @@ actualizarListaCategoriasDom(data.events, containerCategory)
 
 buscador.addEventListener("submit", (e) => {
     e.preventDefault()
-    console.log(document);
     const categoriasSeleccionadas = Array.from(document.querySelectorAll('input[type="checkbox"]:checked')).map(checkbox => checkbox.value);
     const busqueda = valorBusqueda.value
     const eventosFiltrados = filtrarEventosBusqueda(data.events, categoriasSeleccionadas, busqueda)
