@@ -12,7 +12,7 @@ function armarTarjeta(evento) {
         <p class="card-text">${evento.description}</p>
         <div class="d-flex justify-content-between align-items-center">
             <p class="m-0">Price ${evento.price}</p>
-            <a href="./details.html" class="btn btn-primary">See more</a>
+            <a href="./details.html?id=${evento._id}" class="btn btn-primary">See more</a>
         </div>
     </div>
 </div>`;
@@ -67,7 +67,7 @@ actualizarListaCategoriasDom(data.events, containerCategory)
 
 buscador.addEventListener("submit", (e) => {
     e.preventDefault()
-    const categoriasSeleccionadas = Array.from(document.querySelectorAll('input[type="checkbox"]:checked')).map(checkbox => checkbox.value);
+    const categoriasSeleccionadas = Array.from(document.querySelectorAll('input[type="checkbox"]:checked')).map(checkbox => checkbox.value); // ['Race', 'Food Fair']
     const busqueda = valorBusqueda.value
     const eventosFiltrados = filtrarEventosBusqueda(data.events, categoriasSeleccionadas, busqueda)
     actualizarDom(eventosFiltrados, contenedorTarjetas)
