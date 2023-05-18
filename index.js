@@ -1,7 +1,8 @@
-let contenedorTarjetas = document.getElementById("contenedor-tarjetas");
-let containerCategory = document.getElementById("container-categorias");
-let buscador = document.getElementById("buscador");
-let valorBusqueda = document.getElementById("valor-ingresado");
+let contenedorTarjetas = document.getElementById("contenedor-tarjetas")
+let containerCategory = document.getElementById("container-categorias")
+let buscador = document.getElementById("buscador")
+let valorBusqueda = document.getElementById("valor-ingresado")
+let data
 
 function armarTarjeta(evento) {
   return `
@@ -15,9 +16,8 @@ function armarTarjeta(evento) {
             <a href="./details.html?id=${evento._id}" class="btn btn-primary">See more</a>
         </div>
     </div>
-</div>`;
+</div>`
 }
-
 
 function armarCheckbox(nombreCategoria, indice) {
     return `<div class="form-check">
@@ -26,6 +26,12 @@ function armarCheckbox(nombreCategoria, indice) {
               ${nombreCategoria}
             </label>
           </div>`
+}
+
+function armarMensajeNoEncontrado() {
+return `
+    <h3 class="mensaje-no-encontrado">No records where found for the current search. Try other values</h3>
+`
 }
 
 function crearListaCategoriasCheckbox(eventos)
@@ -46,32 +52,46 @@ function actualizarListaCategoriasDom(eventos, seccion) {
 function crearListaEventos(eventos) {
     let listaEventos = ''
     for (let evento of eventos) {
-        listaEventos += armarTarjeta(evento);
+        listaEventos += armarTarjeta(evento)
     }
 
-    return listaEventos;
+    return listaEventos
 }
 
 function actualizarDom(listaEventosACrear, seccion) {
-    const listaEventos = crearListaEventos(listaEventosACrear)
-
-    seccion.innerHTML = listaEventos
+    if (listaEventosACrear.length === 0) {
+        seccion.innerHTML = armarMensajeNoEncontrado()
+    } else {
+        seccion.innerHTML = crearListaEventos(listaEventosACrear)
+    }
 }
 
 function filtrarEventosBusqueda(eventos, categorias, textoBusqueda) {
     return eventos.filter(evento => (categorias.length === 0 || categorias.includes(evento.category)) && evento.name.toLowerCase().includes(textoBusqueda.toLowerCase()))
 }
 
-actualizarDom(data.events, contenedorTarjetas)
-actualizarListaCategoriasDom(data.events, containerCategory)
-
-buscador.addEventListener("submit", (e) => {
-    e.preventDefault()
-    const categoriasSeleccionadas = Array.from(document.querySelectorAll('input[type="checkbox"]:checked')).map(checkbox => checkbox.value); // ['Race', 'Food Fair']
+containerCategory.addEventListener("change", () => {
+    const categoriasSeleccionadas = Array.from(document.querySelectorAll('input[type="checkbox"]:checked')).map(checkbox => checkbox.value)
     const busqueda = valorBusqueda.value
     const eventosFiltrados = filtrarEventosBusqueda(data.events, categoriasSeleccionadas, busqueda)
     actualizarDom(eventosFiltrados, contenedorTarjetas)
-    if (eventosFiltrados.length === 0) {
-        setTimeout(() => alert('No se encontraron resultados para la búsqueda ingresada. Pruebe con otro valor'), 500)
-    }
 })
+
+buscador.addEventListener("submit", (e) => {
+    e.preventDefault()
+    const categoriasSeleccionadas = Array.from(document.querySelectorAll('input[type="checkbox"]:checked')).map(checkbox => checkbox.value) // ['Race', 'Food Fair']
+    const busqueda = valorBusqueda.value
+    const eventosFiltrados = filtrarEventosBusqueda(data.events, categoriasSeleccionadas, busqueda)
+    actualizarDom(eventosFiltrados, contenedorTarjetas)
+})
+
+
+
+fetch('https://mindhub-xj03.onrender.com/api/amazing')
+.then(respuesta => respuesta.json())
+.then(respuesta => {
+    data = respuesta
+    actualizarDom(data.events, contenedorTarjetas)
+    actualizarListaCategoriasDom(data.events, containerCategory)
+})
+.catch(error => console.log(error))

@@ -106,6 +106,18 @@ tbody>tr {
     background-color: white;
 }
 
+.centrado {
+    text-align: center;
+}
+
+.mensaje-no-encontrado {
+    background-color: white;
+    color: red;
+    border-radius: 1rem;
+    padding: 1rem;
+    align-self: center !important;
+}
+
 @media screen and (max-width: 575px) {
 
     .container-detail {

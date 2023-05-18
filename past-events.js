@@ -1,8 +1,9 @@
 let contenedorTarjetas = document.getElementById("contenedor-tarjetas-pastevents")
-const fechaActual = data.currentDate
-let containerCategory = document.getElementById("container-categorias");
-let buscador = document.getElementById("buscador");
-let valorBusqueda = document.getElementById("valor-ingresado");
+let containerCategory = document.getElementById("container-categorias")
+let buscador = document.getElementById("buscador")
+let valorBusqueda = document.getElementById("valor-ingresado")
+let data
+let fechaActual
 
 function armarTarjeta(evento) {
   return `
@@ -28,6 +29,12 @@ function armarCheckbox(nombreCategoria, indice) {
           </div>`
 }
 
+function armarMensajeNoEncontrado() {
+    return `
+        <h3 class="mensaje-no-encontrado">No records where found for the current search. Try other values</h3>
+    `
+}
+    
 function crearListaCategoriasCheckbox(eventos)
 {
     let categoriasCheckbox = ''
@@ -58,26 +65,41 @@ function filtrarEventosPasados(eventos, fecha) {
 
 
 function actualizarDom(listaEventosACrear, seccion) {
-    const listaEventos = crearListaEventos(filtrarEventosPasados(listaEventosACrear, fechaActual))
-
-    seccion.innerHTML = listaEventos
+    if (listaEventosACrear.length === 0) {
+        seccion.innerHTML = armarMensajeNoEncontrado()
+    } else {
+        seccion.innerHTML = crearListaEventos(listaEventosACrear)
+    }
 }
 
 function filtrarEventosBusqueda(eventos, categorias, textoBusqueda) {
     return eventos.filter(evento => (categorias.length === 0 || categorias.includes(evento.category)) && evento.name.toLowerCase().includes(textoBusqueda.toLowerCase()))
 }
 
-actualizarDom(data.events, contenedorTarjetas)
-
-actualizarListaCategoriasDom(data.events, containerCategory)
+containerCategory.addEventListener("change", () => {
+    const categoriasSeleccionadas = Array.from(document.querySelectorAll('input[type="checkbox"]:checked')).map(checkbox => checkbox.value)
+    const busqueda = valorBusqueda.value
+    const eventosPasados = filtrarEventosPasados(data.events, fechaActual)
+    const eventosFiltrados = filtrarEventosBusqueda(eventosPasados, categoriasSeleccionadas, busqueda)
+    actualizarDom(eventosFiltrados, contenedorTarjetas)
+})
 
 buscador.addEventListener("submit", (e) => {
     e.preventDefault()
-    const categoriasSeleccionadas = Array.from(document.querySelectorAll('input[type="checkbox"]:checked')).map(checkbox => checkbox.value);
+    const categoriasSeleccionadas = Array.from(document.querySelectorAll('input[type="checkbox"]:checked')).map(checkbox => checkbox.value)
     const busqueda = valorBusqueda.value
-    const eventosFiltrados = filtrarEventosBusqueda(data.events, categoriasSeleccionadas, busqueda)
+    const eventosPasados = filtrarEventosPasados(data.events, fechaActual)
+    const eventosFiltrados = filtrarEventosBusqueda(eventosPasados, categoriasSeleccionadas, busqueda)
     actualizarDom(eventosFiltrados, contenedorTarjetas)
-    if (eventosFiltrados.length === 0) {
-        setTimeout(() => alert('No se encontraron resultados para la búsqueda ingresada. Pruebe con otro valor'), 500)
-    }
 })
+
+fetch('https://mindhub-xj03.onrender.com/api/amazing')
+.then(respuesta => respuesta.json())
+.then(respuesta => {
+    data = respuesta
+    fechaActual = data.currentDate
+    const eventosPasados = filtrarEventosPasados(data.events, fechaActual)
+    actualizarDom(eventosPasados, contenedorTarjetas)
+    actualizarListaCategoriasDom(data.events, containerCategory)
+})
+.catch(error => console.log(error))
